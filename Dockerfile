@@ -1,4 +1,4 @@
-# Stage 1: Build React frontend
+# Stage 1: Build React app
 FROM node:18-alpine as build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -6,16 +6,13 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Run backend and serve React build
-FROM node:18-alpine
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --omit=dev
-COPY --from=build /app/build ./build
-COPY . .
+# Stage 2: Serve with nginx
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Set environment variables if needed
-ENV NODE_ENV=production
+# Replace default nginx config (optional but recommended)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Start backend (ensure your Express app serves from ./build)
-CMD ["node", "server.js"]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
