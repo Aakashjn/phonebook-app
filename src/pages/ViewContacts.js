@@ -1,41 +1,30 @@
-// pages/ViewContacts.js
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-export default function ViewContacts() {
-  const [contacts, setContacts] = useState([]);
-
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('contacts')) || [];
-    setContacts(stored);
-  }, []);
-
+const ViewContacts = ({ contacts }) => {
   return (
-    <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Contact List</h2>
-      {contacts.length === 0 ? (
-        <p>No contacts available.</p>
-      ) : (
-        <ul className="space-y-2">
-          {contacts.map(contact => (
-            <li
-              key={contact.id}
-              className="bg-white p-4 rounded shadow flex justify-between items-center"
-            >
-              <div>
-                <p className="font-semibold">{contact.name}</p>
-                <p className="text-gray-600">{contact.phone}</p>
-              </div>
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Contact List</h2>
+      {contacts && contacts.length > 0 ? (
+        contacts.map((contact) => (
+          <div key={contact.id} className="mb-4 border p-3 rounded shadow">
+            <p className="text-lg font-semibold">{contact.name}</p>
+            <p className="text-gray-600">{contact.email}</p>
+            <div className="mt-2">
               <Link
-                to={/view/${contact.id}}
+                to={`/view/${contact.id}`}
                 className="text-blue-600 hover:underline"
               >
                 View
               </Link>
-            </li>
-          ))}
-        </ul>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p>No contacts available.</p>
       )}
     </div>
   );
-}
+};
+
+export default ViewContacts;
